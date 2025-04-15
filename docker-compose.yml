@@ -1,0 +1,30 @@
+services:
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    restart: always
+    environment:
+      - GF_SERVER_ROOT_URL=http://my.grafana.server/
+      - GF_PLUGINS_PREINSTALL=grafana-clock-panel
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_AUTH_ANONYMOUS_ORG_NAME=SMCIT
+      - GF_AUTH_ANONYMOUS_DEVICE_LIMIT=0
+    ports:
+      - '3000:3000'
+    volumes:
+      - './storage:/var/lib/grafana'
+    networks:
+      - grafana_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+networks:
+  grafana_net:
+    name: grafana_net
+    driver: bridge
+    attachable: true
