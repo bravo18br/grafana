@@ -2,7 +2,6 @@ services:
   grafana:
     image: grafana/grafana-oss
     container_name: grafana
-    restart: always
     environment:
       - GF_SERVER_ROOT_URL=http://my.grafana.server/
       - GF_PLUGINS_PREINSTALL=grafana-clock-panel
