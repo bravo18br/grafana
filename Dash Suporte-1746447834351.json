@@ -1,0 +1,1068 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 5,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "aef4x3oxrdse8e"
+      },
+      "description": "Evolução do tempo médio do primeiro atendimento, nos últimos 12 meses",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 1800
+              },
+              {
+                "color": "red",
+                "value": 2100
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tempo Médio"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "clocks"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 9,
+      "options": {
+        "barRadius": 0.05,
+        "barWidth": 0.9,
+        "fullHighlight": true,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "dataset": "glpi_db",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n  STR_TO_DATE(CONCAT(YEAR(gt.date_creation), '-', MONTH(gt.date_creation), '-01'), '%Y-%m-%d') AS time, -- Campo de data válido\r\n  DATE_FORMAT(gt.date_creation, '%M/%Y') AS mes_ano, -- Nome do mês + ano (string opcional)\r\n  AVG(gt.takeintoaccount_delay_stat - TIMESTAMPDIFF(SECOND, gt.date, gt.date_creation)) AS \"Tempo Médio\"\r\nFROM \r\n  glpi_tickets gt\r\n  LEFT JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\n  LEFT JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\nWHERE \r\n  gt.date_creation >= DATE_SUB(NOW(), INTERVAL 11 MONTH)\r\n  AND gt.is_deleted = 0\r\n  AND gg.completename LIKE '%Suporte%'\r\nGROUP BY \r\n  time, mes_ano\r\nORDER BY \r\n  time ASC;\r\n\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Primeiro Atendimento (evolução últimos 12 meses)",
+      "transparent": true,
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "aef4x3oxrdse8e"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 1500
+              },
+              {
+                "color": "dark-red",
+                "value": 1800
+              }
+            ]
+          },
+          "unit": "clocks"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 4,
+        "x": 0,
+        "y": 10
+      },
+      "id": 1,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "dataset": "glpi_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "aef4x3oxrdse8e"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n  'Suporte' AS \"Departamento\",\r\n  -- AVG(gt.takeintoaccount_delay_stat) AS \"Tempo Médio\"\r\n  AVG(gt.takeintoaccount_delay_stat - TIMESTAMPDIFF(SECOND, gt.date, gt.date_creation)) as \"Tempo Médio\"\r\nFROM \r\n  glpi_tickets gt\r\n  LEFT JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\n  LEFT JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\nWHERE \r\n  $__timeFilter(gt.date_creation)\r\n  AND gg.completename LIKE '%Suporte%'\r\n  -- AND gt.id=80763\r\n  AND gt.is_deleted = 0  \r\nGROUP BY \r\n  \"Departamento\";\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Primeiro Atendimento",
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "aef4x3oxrdse8e"
+      },
+      "description": "Tempo de atendimento médio para os tickets solucionados na faixa de tempo selecionada, por Grupo",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "clocks"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 20,
+        "x": 4,
+        "y": 10
+      },
+      "id": 2,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.79,
+        "fullHighlight": true,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "horizontal",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": -45,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "dataset": "glpi_db",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n  ROUND(AVG(gt.solve_delay_stat - TIMESTAMPDIFF(SECOND, gt.date, gt.date_creation))) AS avg_delay_minutes,\r\n  gg.name    \r\nFROM \r\n  glpi_tickets gt\r\n  JOIN glpi_groups_tickets ggt ON gt.id = ggt.tickets_id\r\n  JOIN glpi_groups gg ON gg.id = ggt.groups_id\r\nWHERE \r\n  $__timeFilter(gt.solvedate)\r\n  AND gt.solve_delay_stat != 0\r\n  AND gg.completename LIKE '%Suporte%'\r\n  -- AND gt.id=80444\r\n  -- AND gt.id=80763\r\n  -- AND gt.id=80723\r\n  AND gt.is_deleted = 0  \r\n  AND gg.name NOT LIKE '%Triagem%'\r\nGROUP BY \r\n  gg.id\r\nORDER BY\r\n  gg.name;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Média por Grupo",
+      "transparent": true,
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "aef4x3oxrdse8e"
+      },
+      "description": "Filtra a quantidade de tickets criados no range de tempo informado de acordo com o status, separado por Departamento<br>\nEncerrado engloba Solucionados e Fechados<br>\nEm atendimento engloba Atribuídos e Planejados",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 20,
+        "x": 0,
+        "y": 20
+      },
+      "id": 3,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.5,
+        "fullHighlight": true,
+        "groupWidth": 1,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false
+        },
+        "orientation": "vertical",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "Departamento",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "dataset": "glpi_db",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n  'Total' AS status, COUNT(*) AS total\r\nFROM glpi_tickets gt\r\nLEFT JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\nLEFT JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\nWHERE \r\n$__timeFilter(gt.date_creation) \r\nAND gg.completename LIKE '%Suporte%'  \r\nAND gt.is_deleted = 0\r\n\r\nUNION ALL\r\n\r\nSELECT \r\n  'Novo' AS status, COUNT(*) AS total\r\nFROM glpi_tickets gt\r\nLEFT JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\nLEFT JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\nWHERE \r\n$__timeFilter(gt.date_creation) \r\nAND gg.completename LIKE '%Suporte%'  \r\nAND gt.is_deleted = 0\r\nAND gt.status = 1\r\n\r\nUNION ALL\r\n\r\nSELECT \r\n  'Atribuído' AS status, COUNT(*) AS total\r\nFROM glpi_tickets gt\r\nLEFT JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\nLEFT JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\nWHERE \r\n$__timeFilter(gt.date_creation) \r\nAND gg.completename LIKE '%Suporte%'\r\nAND gt.status = 2\r\nAND gt.is_deleted = 0\r\n\r\nUNION ALL\r\n\r\nSELECT \r\n  'Planejado' AS status, COUNT(*) AS total\r\nFROM glpi_tickets gt\r\nLEFT JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\nLEFT JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\nWHERE \r\n$__timeFilter(gt.date_creation) \r\nAND gg.completename LIKE '%Suporte%'\r\nAND gt.status = 3\r\nAND gt.is_deleted = 0\r\n\r\nUNION ALL\r\n\r\nSELECT \r\n  'Pendente' AS status, COUNT(*) AS total\r\nFROM glpi_tickets gt\r\nLEFT JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\nLEFT JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\nWHERE \r\n$__timeFilter(gt.date_creation) \r\nAND gg.completename LIKE '%Suporte%'\r\nAND gt.status = 4\r\nAND gt.is_deleted = 0\r\n\r\nUNION ALL\r\n\r\nSELECT \r\n  'Solucionado' AS status, COUNT(*) AS total\r\nFROM glpi_tickets gt\r\nLEFT JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\nLEFT JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\nWHERE \r\n$__timeFilter(gt.date_creation) \r\nAND gg.completename LIKE '%Suporte%'\r\nAND gt.status = 5\r\nAND gt.is_deleted = 0\r\n\r\nUNION ALL\r\n\r\nSELECT \r\n  'Fechado' AS status, COUNT(*) AS total\r\nFROM glpi_tickets gt\r\nLEFT JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\nLEFT JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\nWHERE \r\n$__timeFilter(gt.date_creation) \r\nAND gg.completename LIKE '%Suporte%'\r\nAND gt.status = 6\r\nAND gt.is_deleted = 0\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Tickets Total",
+      "transparent": true,
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "aef4x3oxrdse8e"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 14400
+              },
+              {
+                "color": "red",
+                "value": 21600
+              }
+            ]
+          },
+          "unit": "clocks"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 4,
+        "x": 20,
+        "y": 20
+      },
+      "id": 4,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "dataset": "glpi_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "aef4x3oxrdse8e"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n  'Suporte' AS \"Departamento\",\r\n  -- AVG(gt.solve_delay_stat) AS \"Tempo Médio\"\r\n  AVG(gt.solve_delay_stat - TIMESTAMPDIFF(SECOND, gt.date, gt.date_creation)) AS \"Tempo Médio\"\r\nFROM \r\n  glpi_tickets gt\r\n  LEFT JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\n  LEFT JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\nWHERE \r\n  $__timeFilter(gt.date_creation)\r\n  AND gg.completename LIKE '%Suporte%'\r\n  -- AND gt.id=80763\r\n  AND gt.is_deleted = 0\r\nGROUP BY \r\n  Departamento\r\nORDER BY \r\n  \"Tempo Médio\" DESC;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "SLA - Service Level Agreement",
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "aef4x3oxrdse8e"
+      },
+      "description": "Gráfico de barras com duas colunas sendo uma com a quantidade total de chamados abertos no dia, uma coluna com a quantidade de chamados por nível de atendimento (QTD de N1, QTD de N2 e QTD de N3) e uma terceira com a quantidade de chamados sem atendimento.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "left",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 5,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.5,
+        "fullHighlight": true,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "orientation": "vertical",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "Categoria",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "dataset": "glpi_db",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n\t-- COUNT(gt.id) as \"Total\",\r\n\t-- SUM(gt.status IN (1,2,3,4)) as \"Abertos\",\r\n\tSUM(gt.status = 1) as \"Novo\",\r\n  SUM(gt.status = 2) as \"Atribuído\",\r\n  SUM(gt.status = 3) as \"Planejado\",\r\n  SUM(gt.status = 4) as \"Pendente\",\r\n  SUM(gt.status = 5) as \"Solucionado\",  \r\n  SUM(gt.status = 6) as \"Fechado\",\r\n  gg.name\r\nFROM \r\n    glpi_tickets gt\r\n\tJOIN glpi_groups_tickets ggt ON gt.id = ggt.tickets_id\r\n\tJOIN glpi_groups gg ON gg.id = ggt.groups_id\r\nWHERE \r\n\t$__timeFilter(gt.date_creation)\r\n\tAND gg.completename LIKE '%Suporte%'\r\n\tAND gt.is_deleted = 0\r\nGROUP BY \r\n\tgg.id\r\nORDER BY\r\n\tgg.name",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Tickets por Grupos",
+      "transparent": true,
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "aef4x3oxrdse8e"
+      },
+      "description": "Lista para auxiliar diretores avaliar tickets antigos",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto",
+              "wrapText": false
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Título"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 937
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Ticket GLPI"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 167
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Criação"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 374
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Departamento"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 320
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 333
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "id": 7,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "dataset": "glpi_db",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n  gt.id AS \"Ticket GLPI\",\r\n  gt.name AS \"Título\",\r\n  DATE_FORMAT(gt.date, '%d/%m/%Y') AS \"Criação\",\r\n  CASE \r\n    WHEN gt.status LIKE '1' THEN 'Novo'\r\n    WHEN gt.status LIKE '2' THEN 'Atribuído'\r\n    WHEN gt.status LIKE '3' THEN 'Planejado'\r\n    WHEN gt.status LIKE '4' THEN 'Pendente'\r\n    WHEN gt.status LIKE '5' THEN 'Solucionado'\r\n    WHEN gt.status LIKE '6' THEN 'Fechado'\r\n    ELSE \"Outro\"\r\n  END AS \"Status\",\r\n  -- CASE \r\n  --   WHEN gg.completename LIKE '%InfraEstrutura%' THEN 'InfraEstrutura'\r\n  --   WHEN gg.completename LIKE '%Sistemas%' THEN 'Sistemas'\r\n  --   WHEN gg.completename LIKE '%Suporte%' THEN 'Suporte'\r\n  --   WHEN gg.completename LIKE '%Pessoas%' THEN 'Gestão de Pessoas'\r\n  --   WHEN gg.completename LIKE '%Administração%' THEN 'Administração'\r\n  --   ELSE \"Outros\"\r\n  -- END AS \"Departamento\",\r\n  gg.name AS \"Grupo\",\r\n  GROUP_CONCAT(DISTINCT CONCAT(gu.firstname, ' ', gu.realname) SEPARATOR ', ') AS \"Responsáveis\"\r\nFROM \r\n  glpi_tickets gt\r\n  LEFT JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\n  LEFT JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\n  JOIN glpi_tickets_users gtu ON gt.id = gtu.tickets_id\r\n  JOIN glpi_users gu ON gtu.users_id = gu.id\r\nWHERE \r\n  solvedate IS NULL\r\n  AND date < DATE_SUB(NOW(), INTERVAL 10 DAY)\r\n  AND gtu.type = 2\r\n  AND (gg.completename LIKE '%Suporte%')\r\n  AND gt.is_deleted = 0\r\nGROUP BY gt.id, gt.name, gt.date, gt.status, gg.completename\r\nORDER BY gt.date ASC\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Tickets com mais de 10 dias",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "aef4x3oxrdse8e"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tempo"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "clocks"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 48
+      },
+      "id": 8,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "dataset": "glpi_db",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n  gt.id AS \"ID\",\r\n  -- gt.solve_delay_stat AS \"Tempo\",\r\n  gt.solve_delay_stat - TIMESTAMPDIFF(SECOND, gt.date, gt.date_creation) AS \"Tempo\",\r\n  gg.name AS \"Grupo\",\r\n  gt.date_creation AS \"Abertura\",\r\n  gt.solvedate AS \"Solucionado\"\r\nFROM \r\n  glpi_tickets gt\r\n  JOIN glpi_groups_tickets ggt ON gt.id = ggt.tickets_id\r\n  JOIN glpi_groups gg ON gg.id = ggt.groups_id\r\nWHERE \r\n  $__timeFilter(gt.solvedate)\r\n  -- gt.date_creation >= DATE_SUB(NOW(), INTERVAL 2 DAY)\r\n  -- gt.solve_delay_stat != 0\r\n  AND gg.completename LIKE '%Suporte%'\r\n  AND gt.is_deleted = 0\r\nORDER BY\r\n  gt.solve_delay_stat DESC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Detalhes Tickets ",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "aef4x3oxrdse8e"
+      },
+      "description": "Filtra chamados encerrados / média tempo / por agente no range de data especificado.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-YlRd"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Média"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "clocks"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tickets"
+            },
+            "properties": [
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tickets"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 58
+      },
+      "id": 6,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "dataset": "glpi_db",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  CONCAT(gu.firstname,' ',gu.realname) as \"Nome\",\r\n  COUNT(gt.id) as \"Tickets\",\r\n  -- AVG(gt.solve_delay_stat) as \"Média\",\r\n  AVG(gt.solve_delay_stat - TIMESTAMPDIFF(SECOND, gt.date, gt.date_creation)) AS \"Média\",\r\n  -- CASE \r\n  --   WHEN gg.completename LIKE '%InfraEstrutura%' THEN 'InfraEstrutura'\r\n  --   WHEN gg.completename LIKE '%Sistemas%' THEN 'Sistemas'\r\n  --   WHEN gg.completename LIKE '%Pessoas%' THEN 'Gestão de Pessoas'\r\n  --   WHEN gg.completename LIKE '%Administração%' THEN 'Administração'\r\n  --   ELSE 'Suporte'\r\n  -- END AS \"Departamento\",\r\n  gg.name as \"Setor\"\r\nFROM \r\n  glpi_tickets gt\r\n  JOIN glpi_tickets_users gtu ON gt.id = gtu.tickets_id\r\n  JOIN glpi_users gu ON gu.id = gtu.users_id\r\n  JOIN glpi_groups_tickets ggt ON ggt.tickets_id = gt.id\r\n  JOIN glpi_groups gg ON ggt.groups_id = gg.id\r\nWHERE \r\n  $__timeFilter(gt.solvedate)\r\n  AND gtu.type=2\r\n  AND gg.completename LIKE '%Suporte%'\r\n  AND gt.is_deleted = 0\r\nGROUP BY \r\n  Nome\r\nORDER BY \r\n  -- Departamento DESC,\r\n  Setor ASC,\r\n  Tickets DESC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Tickets por Agente",
+      "transparent": true,
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "2025-03-12T03:00:00.000Z",
+    "to": "2025-03-20T02:59:59.000Z"
+  },
+  "timepicker": {},
+  "timezone": "America/Sao_Paulo",
+  "title": "Dash Suporte",
+  "uid": "feg47tbx2zfnkb",
+  "version": 19,
+  "weekStart": ""
+}

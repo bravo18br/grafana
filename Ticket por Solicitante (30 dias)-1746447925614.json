@@ -1,0 +1,134 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 9,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "aef4x3oxrdse8e"
+      },
+      "description": "Filtra a quantidade de tickets separado por Secretaria solicitante.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "displayLabels": [
+          "value",
+          "name"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "percent"
+          ],
+          "width": 200
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Total de Tickets$/",
+          "values": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "asc"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "dataset": "glpi_db",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n-- gl.completename as \"Unidade\",\r\n  CASE \r\n    WHEN gl.completename LIKE '%SMAS%' THEN 'SMAS'\r\n    WHEN gl.completename LIKE '%SMED%' THEN 'SMED'\r\n    WHEN gl.completename LIKE '%SMCIT%' THEN 'SMCIT'\r\n    WHEN gl.completename LIKE '%SMSA%' THEN 'SMSA'\r\n    WHEN gl.completename LIKE '%SMPL%' THEN 'SMPL'\r\n    WHEN gl.completename LIKE '%PGM%' THEN 'PGM'\r\n    WHEN gl.completename LIKE '%SMEL%' THEN 'SMEL'\r\n    WHEN gl.completename LIKE '%SMMA%' THEN 'SMMA'  \r\n    WHEN gl.completename LIKE '%SMAD%' THEN 'SMAD'    \r\n    WHEN gl.completename LIKE '%SMAG%' THEN 'SMAG'    \r\n    WHEN gl.completename LIKE '%SMCS%' THEN 'SMCS'\r\n    WHEN gl.completename LIKE '%SMCT%' THEN 'SMCT'\r\n    WHEN gl.completename LIKE '%SMFI%' THEN 'SMFI'\r\n    WHEN gl.completename LIKE '%SMGO%' THEN 'SMGO'\r\n    WHEN gl.completename LIKE '%SMOP%' THEN 'SMOP'\r\n    WHEN gl.completename LIKE '%SMSP%' THEN 'SMSP'\r\n    WHEN gl.completename LIKE '%SMTE%' THEN 'SMTE'\r\n    WHEN gl.completename LIKE '%SMUR%' THEN 'SMUR'\r\n    WHEN gl.completename LIKE '%CGM%' THEN 'CGM'\r\n    WHEN gl.completename LIKE '%SMGP%' THEN 'SMGP'\r\n    ELSE \"Outros\"\r\n  END AS \"Unidade\",\r\n  COUNT(gt.id) as \"Total de Tickets\"\r\nFROM \r\n  glpi_tickets gt\r\n  LEFT JOIN glpi_locations gl ON gt.locations_id = gl.id\r\nWHERE \r\n  -- $__timeFilter(gt.date_creation)\r\n  gt.date_creation >= DATE_SUB(NOW(), INTERVAL 30 DAY)\r\n  AND gt.is_deleted = 0\r\nGROUP BY \r\n  Unidade\r\nORDER BY \r\n  \"Total de Tickets\" DESC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Tickets por Secretaria (30 dias)",
+      "transparent": true,
+      "type": "piechart"
+    }
+  ],
+  "preload": true,
+  "refresh": "",
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true
+  },
+  "timezone": "America/Sao_Paulo",
+  "title": "Ticket por Solicitante (30 dias)",
+  "uid": "degwf8phwjdogd",
+  "version": 9,
+  "weekStart": ""
+}

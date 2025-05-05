@@ -3,6 +3,11 @@ services:
     image: grafana/grafana-oss
     container_name: grafana
     environment:
+      - GF_DATABASE_TYPE=postgres
+      - GF_DATABASE_HOST=postgres:5432
+      - GF_DATABASE_NAME=grafana
+      - GF_DATABASE_USER=docker
+      - GF_DATABASE_PASSWORD=docker
       - GF_SERVER_ROOT_URL=http://my.grafana.server/
       - GF_PLUGINS_PREINSTALL=grafana-clock-panel
       - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -11,10 +16,9 @@ services:
       - GF_AUTH_ANONYMOUS_DEVICE_LIMIT=0
     ports:
       - '3000:3000'
-    volumes:
-      - './storage:/var/lib/grafana'
     networks:
       - grafana_net
+      - postgres_net
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 30s
@@ -27,3 +31,5 @@ networks:
     name: grafana_net
     driver: bridge
     attachable: true
+  postgres_net:
+    external: true
